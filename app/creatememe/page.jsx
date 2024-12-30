@@ -21,7 +21,6 @@ const Creatememe = () => {
             setError("Both text fields must be filled out.");
             return;
         }
-
         setError("");
         setLoading(true);
 
