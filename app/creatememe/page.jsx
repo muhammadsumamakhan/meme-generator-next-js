@@ -1,31 +1,23 @@
 "use client";
 
-import React, { useRef, useState, Suspense } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const Creatememe = () => {
     const [image, setImage] = useState("");
     const [error, setError] = useState("");
-    const input1 = useRef();
-    const input2 = useRef();
+    const [firstInput, setFirstInput] = useState("");
+    const [secondInput, setSecondInput] = useState("");
     const [loading, setLoading] = useState(false);
 
     const searchParams = useSearchParams();
-    const templateId = searchParams?.get("id");
-    const templateUrl = searchParams?.get("url");
+    const templateId = searchParams.get("id");
+    const templateUrl = searchParams.get("url");
 
     const createMeme = async (e) => {
         e.preventDefault();
 
-        const firstInput = input1.current.value.trim();
-        const secondInput = input2.current.value.trim();
-
-        if (!templateId || !templateUrl) {
-            setError("Invalid template data. Please check the URL.");
-            return;
-        }
-
-        if (!firstInput || !secondInput) {
+        if (!firstInput.trim() || !secondInput.trim()) {
             setError("Both text fields must be filled out.");
             return;
         }
@@ -45,12 +37,10 @@ const Creatememe = () => {
             } else {
                 setError("Failed to create meme. Please try again.");
             }
+            setLoading(false);
         } catch (error) {
             setError("Error creating meme: " + error.message);
-        } finally {
             setLoading(false);
-            input1.current.value = "";
-            input2.current.value = "";
         }
     };
 
@@ -85,15 +75,13 @@ const Creatememe = () => {
                     />
                 </div>
 
-                <form
-                    onSubmit={createMeme}
-                    className="space-y-4 w-full max-w-md mx-auto text-center"
-                >
+                <form onSubmit={createMeme} className="space-y-4 w-full max-w-md mx-auto text-center">
                     <div>
                         <input
                             type="text"
                             placeholder="Enter your first text"
-                            ref={input1}
+                            value={firstInput}
+                            onChange={(e) => setFirstInput(e.target.value)}
                             className="w-full border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D003B] transition-all"
                         />
                     </div>
@@ -101,7 +89,8 @@ const Creatememe = () => {
                         <input
                             type="text"
                             placeholder="Enter your second text"
-                            ref={input2}
+                            value={secondInput}
+                            onChange={(e) => setSecondInput(e.target.value)}
                             className="w-full border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D003B] transition-all"
                         />
                     </div>
@@ -139,19 +128,11 @@ const Creatememe = () => {
                         </button>
                     </div>
                 ) : (
-                    <h2 className="text-xl text-gray-600 text-center">
-                        Waiting for your meme...
-                    </h2>
+                    <h2 className="text-xl text-gray-600 text-center">Waiting for your meme...</h2>
                 )}
             </div>
         </div>
     );
 };
 
-const CreatememePage = () => (
-    <Suspense fallback={<div>Loading...</div>}>
-        <Creatememe />
-    </Suspense>
-);
-
-export default CreatememePage;
+export default Creatememe;
