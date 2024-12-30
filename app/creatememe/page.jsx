@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 const Creatememe = () => {
@@ -11,8 +11,8 @@ const Creatememe = () => {
     const [loading, setLoading] = useState(false);
 
     const searchParams = useSearchParams();
-    const templateId = searchParams.get("id");
-    const templateUrl = searchParams.get("url");
+    const templateId = searchParams?.get("id");
+    const templateUrl = searchParams?.get("url");
 
     const createMeme = async (e) => {
         e.preventDefault();
@@ -148,4 +148,10 @@ const Creatememe = () => {
     );
 };
 
-export default Creatememe;
+const CreatememePage = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <Creatememe />
+    </Suspense>
+);
+
+export default CreatememePage;
